@@ -50,3 +50,72 @@ gcloud compute instances delete abir-instance-1 --zone=us-west4-b
 ```
 ![Deletion process](./gcp-compute-engine-images/delete.PNG)
 ### Instance Creation with Terraform
+Setup a vm instance. Ensure [gcloud cli installed](https://cloud.google.com/sdk/docs/install).
+Now [install terraform](https://developer.hashicorp.com/terraform/tutorials/gcp-get-started/install-cli). By running the following codes in [terraform will be installed](https://developer.hashicorp.com/terraform/downloads).
+```
+wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+
+echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+
+sudo apt update && sudo apt install terraform
+```
+To build the the vm on compute engine follow the steps bellow,
+1. Make a service account for terraform. Follow the illustrated below.
+    ![step1](./gcp-compute-engine-images/service-account.png)
+
+    ![step2](./gcp-compute-engine-images/create-sa.png)
+
+    ![step3](./gcp-compute-engine-images/csa-name.png)
+
+    ![step4](./gcp-compute-engine-images/csa-role.png)
+
+    ![step5](./gcp-compute-engine-images/csa-done.png)
+
+    ![step6](./gcp-compute-engine-images/completion.png)
+
+    ![step7](./gcp-compute-engine-images/create-key.png)
+
+    ![step8](./gcp-compute-engine-images/json-key.png)
+
+    ![step9](./gcp-compute-engine-images/download-key.png)
+    Keep the key file in the same directory as the configuration file for this configuration to work.
+2. Write configuration file. This is what it will look like.
+    ```
+    terraform {
+    required_providers {
+        google = {
+        source = "hashicorp/google"
+        version = "4.51.0"
+        }
+    }
+    }
+
+    provider "google" {
+    credentials = file("<NAME>.json")
+
+    project = "<PROJECT_ID>"
+    region  = "us-central1"
+    zone    = "us-central1-c"
+    }
+
+    resource "google_compute_instance" "vm_instance" {
+    name         = "terraform-instance"
+    machine_type = "f1-micro"
+
+    boot_disk {
+        initialize_params {
+        image = "debian-cloud/debian-11"
+        }
+    }
+    }
+    ```
+3. Now run the following to initialize the directory.
+    ```
+    terraform init
+    ```
+4. Run `terraform fmt` to formt the terraform configuration to be consistent and to ensure configuration is syntactically valid and internally consistent by using the `terraform validate` command. (Optional)
+5. To build the infrastructure use the following command.
+    ```
+    terraform apply
+    ```
+Now view the gcloud console to view created infrastructure.
