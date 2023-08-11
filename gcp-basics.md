@@ -79,43 +79,61 @@ To build the the vm on compute engine follow the steps bellow,
 
     ![step9](./gcp-compute-engine-images/download-key.png)
     Keep the key file in the same directory as the configuration file for this configuration to work.
-2. Write configuration file. This is what it will look like.
+2. Write configuration file with `*.tf` as extension. This is what it will look like.
     ```
     terraform {
-    required_providers {
-        google = {
-        source = "hashicorp/google"
-        version = "4.51.0"
+        required_providers {
+            google = {
+            source = "hashicorp/google"
+            version = "4.77.0"
+            }
         }
-    }
     }
 
     provider "google" {
-    credentials = file("<NAME>.json")
+        credentials = file("<NAME>.json")
 
-    project = "<PROJECT_ID>"
-    region  = "us-central1"
-    zone    = "us-central1-c"
+        project = "<PROJECT_ID>"
+        region  = "us-west4"
+        zone    = "us-west4-b"
     }
 
     resource "google_compute_instance" "vm_instance" {
-    name         = "terraform-instance"
-    machine_type = "f1-micro"
+        name         = "terraform-instance"
+        machine_type = "e2-micro"
 
-    boot_disk {
-        initialize_params {
-        image = "debian-cloud/debian-11"
+        boot_disk {
+            initialize_params {
+            image = "debian-cloud/debian-11"
+            }
+        }
+          network_interface {
+            network = "default"
+            access_config {
         }
     }
-    }
     ```
+    Here `<NAME>` needs to changed to the name of json key file that was downloaded. `<PROJECT_ID>` needs to be changed to the id of the project where you want create your infrastructure.
+
 3. Now run the following to initialize the directory.
     ```
     terraform init
     ```
+    ![init](./gcp-compute-engine-images/init.PNG)
 4. Run `terraform fmt` to formt the terraform configuration to be consistent and to ensure configuration is syntactically valid and internally consistent by using the `terraform validate` command. (Optional)
 5. To build the infrastructure use the following command.
     ```
     terraform apply
     ```
-Now view the gcloud console to view created infrastructure.
+    ![apply](./gcp-compute-engine-images/apply1.PNG)
+    
+    ![apply](./gcp-compute-engine-images/apply2.PNG)
+    Now view the gcloud console to view created infrastructure.
+    ![created infrastructure](./gcp-compute-engine-images/terraform-instance.png)
+6. The infrastructure can be taken down with the following command.
+    ```
+    terraform destroy
+    ```
+    ![destroy](./gcp-compute-engine-images/destroy1.PNG)
+
+    ![destroy](./gcp-compute-engine-images/destroy2.PNG)
