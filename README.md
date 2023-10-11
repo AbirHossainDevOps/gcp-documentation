@@ -160,6 +160,7 @@ To build the the vm on compute engine follow the steps bellow,
     ![destroy](./gcp-compute-engine-images/destroy1.PNG)
 
     ![destroy](./gcp-compute-engine-images/destroy2.PNG)
+<<<<<<< HEAD:gcp-basics.md
 
 ## Creating a Cloud SQL instance
 
@@ -256,3 +257,5 @@ spring.cloud.gcp.credentials.location=classpath:<key-file-name.json>
 ```
 With this the application now can connect with the cloud sql instance.
 
+=======
+>>>>>>> 5db3842b953ad99ab800f7ea3c4bbfbbe42b0b13:README.md
